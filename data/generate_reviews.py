@@ -1,10 +1,13 @@
 """Generate a synthetic customer-review dataset for sentiment analysis."""
 
 import argparse
+import logging
 import random
 
 import numpy as np
 import pandas as pd
+
+logger = logging.getLogger(__name__)
 
 POSITIVE_SEEDS = [
     "Amazing quality and fast delivery! Totally satisfied.",
@@ -59,15 +62,20 @@ def synthesize(n: int, seed: int = 42) -> pd.DataFrame:
 
 
 def main() -> None:
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=8000)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--out", type=str, default="data/reviews.csv")
     args = ap.parse_args()
 
+    if args.n < 1:
+        ap.error(f"--n must be a positive integer, got {args.n}")
+
     df = synthesize(args.n, args.seed)
     df.to_csv(args.out, index=False)
-    print(f"[OK] wrote {args.out} with {len(df):,} rows")
+    logger.info("[OK] wrote %s with %s rows", args.out, f"{len(df):,}")
 
 
 if __name__ == "__main__":

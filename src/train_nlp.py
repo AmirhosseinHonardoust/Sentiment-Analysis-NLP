@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import logging
 import os
 
 import matplotlib.pyplot as plt
@@ -23,6 +24,8 @@ from sklearn.pipeline import Pipeline
 from wordcloud import STOPWORDS, WordCloud
 
 from utils import preprocess
+
+logger = logging.getLogger(__name__)
 
 
 def ensure_outdir(path: str) -> None:
@@ -68,7 +71,30 @@ def top_tfidf_features(
         f.write("\n".join(lines))
 
 
+def validate_inputs(ap: argparse.ArgumentParser, df: pd.DataFrame, test_size: float) -> None:
+    """Fail fast with a clear message instead of an opaque sklearn traceback."""
+    if not 0.0 < test_size < 1.0:
+        ap.error(f"--test-size must be between 0 and 1 (exclusive), got {test_size}")
+    if df.empty:
+        ap.error("No usable rows after dropping rows with missing text/label.")
+    class_counts = df["label"].value_counts()
+    if int(class_counts.min()) < 2:
+        ap.error(
+            "Each label needs at least 2 samples for a stratified train/test split; "
+            f"found: {class_counts.to_dict()}"
+        )
+    n_test = round(len(df) * test_size)
+    n_classes = df["label"].nunique()
+    if n_test < n_classes:
+        ap.error(
+            f"--test-size {test_size} on {len(df)} rows yields {n_test} test row(s), "
+            f"fewer than the {n_classes} classes present; increase --test-size or add data."
+        )
+
+
 def main() -> None:
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--input", required=True)
     ap.add_argument("--outdir", default="outputs")
@@ -79,6 +105,7 @@ def main() -> None:
     ensure_outdir(args.outdir)
     df = load_dataset(args.input)
     df.dropna(subset=["text", "label"], inplace=True)
+    validate_inputs(ap, df, args.test_size)
     df["text_clean"] = df["text"].astype(str).apply(preprocess)
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -155,9 +182,9 @@ def main() -> None:
     dump(best_vec, os.path.join(args.outdir, "vectorizer.joblib"))
     dump(best_clf, os.path.join(args.outdir, "best_model.joblib"))
 
-    print("[OK] Training complete.")
-    print(f"Best model: {best_name} (F1-macro={best_score:.3f})")
-    print(f"Outputs saved to: {args.outdir}")
+    logger.info("[OK] Training complete.")
+    logger.info("Best model: %s (F1-macro=%.3f)", best_name, best_score)
+    logger.info("Outputs saved to: %s", args.outdir)
 
 
 if __name__ == "__main__":
