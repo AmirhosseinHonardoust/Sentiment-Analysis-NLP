@@ -2,6 +2,7 @@
 
 import argparse
 import logging
+import os
 import random
 
 import numpy as np
@@ -30,6 +31,18 @@ NEUTRAL_SEEDS = [
     "The item matches the description.",
     "It's fine, does the job.",
 ]
+
+
+def _env_int(name: str, default: int) -> int:
+    """Read an int default from the environment, falling back if unset/invalid."""
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    try:
+        return int(raw)
+    except ValueError:
+        logger.warning("Ignoring invalid %s=%r; using default %s", name, raw, default)
+        return default
 
 
 def synthesize(n: int, seed: int = 42) -> pd.DataFrame:
@@ -66,8 +79,10 @@ def main() -> None:
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=8000)
-    ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--out", type=str, default="data/reviews.csv")
+    ap.add_argument("--seed", type=int, default=_env_int("SENTIMENT_SEED", 42))
+    ap.add_argument(
+        "--out", type=str, default=os.environ.get("SENTIMENT_DATA_OUT", "data/reviews.csv")
+    )
     args = ap.parse_args()
 
     if args.n < 1:
