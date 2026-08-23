@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Generated data & model artifacts (regenerate via data/generate_reviews.py
+# and src/train_nlp.py per the README)
+data/reviews.csv
+outputs/
+
+# OS
+.DS_Store

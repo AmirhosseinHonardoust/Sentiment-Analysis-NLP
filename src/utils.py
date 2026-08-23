@@ -1,10 +1,16 @@
+"""Text preprocessing helpers: cleaning, stopword removal, lemmatization."""
+
 import re
+
 import nltk
-from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
 
 _DOWNLOADED = False
-def _ensure_nltk():
+
+
+def _ensure_nltk() -> None:
+    """Download the NLTK corpora needed for preprocessing, once per process."""
     global _DOWNLOADED
     if _DOWNLOADED:
         return
@@ -22,9 +28,13 @@ def _ensure_nltk():
         nltk.download("stopwords", quiet=True)
     _DOWNLOADED = True
 
+
 _lemmatizer = WordNetLemmatizer()
-_stop = set()
+_stop: set[str] = set()
+
+
 def preprocess(text: str) -> str:
+    """Lowercase, strip URLs/punctuation, drop stopwords/short tokens, lemmatize."""
     _ensure_nltk()
     global _stop
     if not _stop:
