@@ -1,5 +1,7 @@
 # Sentiment Analysis (NLP)
 
+[![CI](https://github.com/AmirhosseinHonardoust/Sentiment-Analysis-NLP/actions/workflows/ci.yml/badge.svg)](https://github.com/AmirhosseinHonardoust/Sentiment-Analysis-NLP/actions/workflows/ci.yml)
+
 Customer review sentiment analysis with Python and NLP.  
 The project uses a **synthetic review dataset** (positive, neutral, negative), applies text preprocessing (cleaning, tokenization, stopwords removal, lemmatization), converts text to **TF-IDF features**, and trains classifiers (Naive Bayes, Logistic Regression, Random Forest).  
 The best model is selected based on macro F1-score, and results are visualized with confusion matrix, word clouds, and top TF-IDF features.
@@ -24,10 +26,13 @@ The best model is selected based on macro F1-score, and results are visualized w
 ```
 sentiment-analysis-nlp/
 ├─ README.md
+├─ CONTRIBUTING.md
 ├─ LICENSE
+├─ .python-version
 ├─ requirements.txt
 ├─ requirements-dev.txt
 ├─ pyproject.toml
+├─ .github/workflows/ci.yml
 ├─ data/
 │  ├─ generate_reviews.py
 │  └─ reviews.csv (generated, gitignored)
@@ -83,6 +88,21 @@ python src/train_nlp.py --input data/reviews.csv --outdir outputs --test-size 0.
 - `wordcloud_positive.png`, `wordcloud_negative.png`
 - `top_features.txt`
 - `best_model.joblib`, `vectorizer.joblib`
+
+---
+
+## Configuration
+CLI flags always take precedence; these environment variables set the defaults
+when a flag is omitted:
+
+| Variable | Used by | Default |
+|---|---|---|
+| `SENTIMENT_SEED` | both scripts (`--seed`) | `42` |
+| `SENTIMENT_OUTDIR` | `train_nlp.py` (`--outdir`) | `outputs` |
+| `SENTIMENT_DATA_OUT` | `generate_reviews.py` (`--out`) | `data/reviews.csv` |
+
+An invalid `SENTIMENT_SEED` (non-integer) is ignored with a warning, falling
+back to `42`, rather than crashing.
 
 ---
 
