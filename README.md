@@ -9,7 +9,7 @@
 [![CI](https://github.com/AmirhosseinHonardoust/Sentiment-Analysis-NLP/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/AmirhosseinHonardoust/Sentiment-Analysis-NLP/actions/workflows/ci.yml)
 
 </div>
-
+ 
 A customer-review sentiment classifier built on a **TF-IDF + classical ML** pipeline (Naive Bayes, Logistic Regression, Random Forest), with **synthetic data generation**, **macro-F1 model selection**, **visual reports**, **environment-driven configuration**, and an **automated quality gate** (ruff, black, mypy, pytest, CI).
 
 > **Important:** This project trains on a **synthetic, templated review dataset**, not real customer reviews.
