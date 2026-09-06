@@ -1,6 +1,7 @@
 <div align="center">
 
 # Sentiment Analysis (NLP)
+<img width="1672" height="941" alt="Sentiment-Analysis-NLP" src="https://github.com/user-attachments/assets/76045d53-7e99-408f-bb40-3e1bd5b8ab07" />
 
 ![Python](https://img.shields.io/badge/Python-3.12%2B-blue)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-TF--IDF%20%2B%20NB%2FLogReg%2FRF-orange)
